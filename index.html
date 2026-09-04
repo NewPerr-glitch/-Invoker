@@ -2,9 +2,24 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Dota 2 Тренажёр: Invoker & SF</title>
+    <title>⚔️ Тренажёр: Invoker & SF</title>
+    <link rel="icon" type="image/png" href="https://cdn.cloudflare.steamstatic.com/apps/dota2/images/dota_react/global/dota2_logo_symbol.png">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
         
         body {
             background: #050608;
@@ -127,7 +142,6 @@
 
         .btn-auth-action:hover { background: #e74c3c; }
 
-        /* Окно авторизации */
         .auth-modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
@@ -267,7 +281,6 @@
             box-shadow: 0 0 8px rgba(241, 196, 15, 0.3);
         }
 
-        /* Экран Игры */
         #game-screen {
             display: flex;
             gap: 20px;
@@ -277,9 +290,10 @@
             border-radius: 8px;
             box-shadow: 0 0 50px rgba(0,0,0,0.95);
             transition: background 0.5s ease;
+            background-size: cover;
+            background-position: center;
         }
 
-        /* Экран Магазина */
         #shop-screen {
             display: none;
             flex-direction: column;
@@ -291,6 +305,8 @@
             box-shadow: 0 0 50px rgba(142, 68, 173, 0.4);
             min-height: 75vh;
             transition: background 0.5s ease;
+            background-size: cover;
+            background-position: center;
         }
 
         .shop-header-bar {
@@ -642,7 +658,6 @@
         .recipe-left { display: flex; align-items: center; gap: 8px; }
         .mini-icon { width: 24px; height: 24px; border-radius: 3px; background-size: cover; border: 1px solid #444; }
 
-        /* Подвал / Поддержать автора */
         .app-footer {
             display: flex;
             justify-content: center;
@@ -675,7 +690,6 @@
 </head>
 <body class="bg-default">
 
-<!-- Модальное окно авторизации -->
 <div id="auth-modal" class="auth-modal-overlay">
     <div class="auth-card">
         <div class="auth-title">Вход в Аккаунт</div>
@@ -728,7 +742,6 @@
         </div>
     </div>
 
-    <!-- Главный экран тренажёра -->
     <div id="game-screen" class="bg-default">
         <div class="sidebar-left">
             <div>
@@ -895,7 +908,6 @@
         </div>
     </div>
 
-    <!-- Отдельный Экран Магазина Фонов -->
     <div id="shop-screen" class="bg-default">
         <div class="shop-header-bar">
             <div class="shop-page-title">
@@ -915,7 +927,6 @@
 </div>
 
 <script>
-    // --- Логика Регистрации и Аккаунтов ---
     let currentUser = null;
     let usersData = JSON.parse(localStorage.getItem('dota_users_db')) || {};
 
@@ -1016,7 +1027,6 @@
         saveUsersData();
     }
 
-    // --- Анимация заднего фона ---
     const canvas = document.getElementById('bg-canvas');
     const ctx = canvas.getContext('2d');
     let particles = [];
@@ -1159,21 +1169,19 @@
 
     function applyActiveBg() {
         const targetClass = previewBg || activeBg;
-        
+        const gameScreen = document.getElementById('game-screen');
+        const shopScreen = document.getElementById('shop-screen');
+
         if (targetClass === 'bg-custom' && customBgUrl) {
-            document.body.className = '';
+            document.body.className = 'bg-default';
             document.body.style.backgroundImage = `url('${customBgUrl}')`;
             
-            const gameScreen = document.getElementById('game-screen');
-            const shopScreen = document.getElementById('shop-screen');
-            if (gameScreen) { gameScreen.className = ''; gameScreen.style.backgroundImage = `url('${customBgUrl}')`; }
-            if (shopScreen) { shopScreen.className = ''; shopScreen.style.backgroundImage = `url('${customBgUrl}')`; }
+            if (gameScreen) { gameScreen.className = 'bg-default'; gameScreen.style.backgroundImage = `url('${customBgUrl}')`; }
+            if (shopScreen) { shopScreen.className = 'bg-default'; shopScreen.style.backgroundImage = `url('${customBgUrl}')`; }
         } else {
             document.body.style.backgroundImage = '';
             document.body.className = targetClass;
             
-            const gameScreen = document.getElementById('game-screen');
-            const shopScreen = document.getElementById('shop-screen');
             if (gameScreen) { gameScreen.style.backgroundImage = ''; gameScreen.className = targetClass; }
             if (shopScreen) { shopScreen.style.backgroundImage = ''; shopScreen.className = targetClass; }
         }
@@ -1668,7 +1676,7 @@
 
     function handleSFInput(key) {
         const expectedSpellName = currentTaskChain[chainIndex];
-        const expectedKey = sfSpells[expectedSpellName].key;
+        const expectedKey = sfSpells[expectedSpellName] ? sfSpells[expectedSpellName].key : null;
 
         let castedSpellName = '';
         for (let name in sfSpells) {
@@ -1692,7 +1700,7 @@
                 requiemCastStart = Date.now();
                 const elapsedEul = requiemCastStart - eulStartTime;
                 const requiemLandTime = elapsedEul + REQUIEM_CAST_TIME;
-                const hitPosPercent = (elapsedEul / EUL_DURATION) * 100;
+                const hitPosPercent = Math.min(100, Math.max(0, (elapsedEul / EUL_DURATION) * 100));
 
                 const hitMarker = document.getElementById('hit-marker');
                 hitMarker.style.left = `${hitPosPercent}%`;
@@ -1759,6 +1767,8 @@
         clearInterval(eulInterval);
         eulActive = false;
         chainIndex = 0;
+        document.getElementById('eul-fill-bar').style.width = '0%';
+        document.getElementById('hit-marker').style.display = 'none';
         document.getElementById('eul-status-text').innerText = `❌ ${msg}`;
         document.getElementById('eul-status-text').style.color = '#e74c3c';
         updateComboUI();
