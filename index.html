@@ -1,8 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Тренажёр: Invoker и SF</title>
+    <title>Dota 2 Тренажёр: Invoker & SF</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         
@@ -641,6 +641,36 @@
         .recipe-item:hover { background: #222632; border-color: #e2b041; }
         .recipe-left { display: flex; align-items: center; gap: 8px; }
         .mini-icon { width: 24px; height: 24px; border-radius: 3px; background-size: cover; border: 1px solid #444; }
+
+        /* Подвал / Поддержать автора */
+        .app-footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .donate-link {
+            color: #e2b041;
+            font-size: 14px;
+            font-weight: bold;
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 6px 16px;
+            background: rgba(14, 16, 20, 0.9);
+            border: 1px solid #e2b041;
+            border-radius: 20px;
+            box-shadow: 0 0 10px rgba(226, 176, 65, 0.2);
+            transition: all 0.25s ease;
+        }
+
+        .donate-link:hover {
+            background: #e2b041;
+            color: #000;
+            box-shadow: 0 0 18px rgba(226, 176, 65, 0.7);
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body class="bg-default">
@@ -877,6 +907,10 @@
         </div>
 
         <div class="shop-grid-large" id="bg-shop-page-grid"></div>
+    </div>
+
+    <div class="app-footer">
+        <a href="https://www.donationalerts.com/r/ban_newper" target="_blank" class="donate-link">❤️ поддержать автора</a>
     </div>
 </div>
 
